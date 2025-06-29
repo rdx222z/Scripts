@@ -1,0 +1,193 @@
+
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Código Roblox - GitHub Pages</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #222;
+        color: #fff;
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    pre {
+        background: #333;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: Consolas, monospace;
+        font-size: 14px;
+    }
+    button {
+        display: block;
+        margin: 20px auto;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        background-color: #ff69b4;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #ff85c1;
+    }
+    #mensaje {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+    /* Opcional: estilo para instrucciones */
+    #instrucciones {
+        background: #2a2a2a;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 30px;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Código Roblox - GitHub Pages</h1>
+
+<h2>Tu Código Roblox</h2>
+<pre id="codigo">
+local p=game.Players.LocalPlayer
+local s=Instance.new("ScreenGui",p:WaitForChild("PlayerGui"))
+s.Name="rdx222_UI" s.ResetOnSpawn=false s.ZIndexBehavior=Enum.ZIndexBehavior.Global
+local f=Instance.new("Frame",s)
+f.Size=UDim2.new(0,200,0,130)
+f.Position=UDim2.new(0.5,-100,0.5,-65)
+f.BackgroundColor3=Color3.fromRGB(30,30,30)
+f.BorderSizePixel=0
+f.Active=true
+f.Draggable=true
+
+local uic=Instance.new("UICorner",f)
+uic.CornerRadius=UDim.new(0,12)
+local ub=Instance.new("UIStroke",f)
+ub.Thickness=2
+ub.Color=Color3.fromRGB(255,105,180)
+
+local t=Instance.new("TextLabel",f)
+t.Size=UDim2.new(1,0,0,25)
+t.Position=UDim2.new(0,0,0,0)
+t.BackgroundTransparency=1
+t.Text="by rdx222"
+t.TextColor3=Color3.fromRGB(255,255,255)
+t.TextStrokeTransparency=0
+t.Font=Enum.Font.GothamBlack
+t.TextScaled=true
+
+local toggle=Instance.new("TextButton",f)
+toggle.Size=UDim2.new(0.9,0,0,30)
+toggle.Position=UDim2.new(0.05,0,0.35,0)
+toggle.BackgroundColor3=Color3.fromRGB(50,50,50)
+toggle.Text="Steal: OFF"
+toggle.TextColor3=Color3.fromRGB(255,255,255)
+toggle.TextStrokeTransparency=0
+toggle.Font=Enum.Font.GothamBold
+toggle.TextScaled=true
+Instance.new("UICorner",toggle).CornerRadius=UDim.new(0,8)
+local togState=false
+
+local label=Instance.new("TextLabel",f)
+label.Position=UDim2.new(0.05,0,0.7,0)
+label.Size=UDim2.new(0.9,0,0.2,0)
+label.BackgroundTransparency=1
+label.Text=""
+label.TextColor3=Color3.fromRGB(255,255,255)
+label.Font=Enum.Font.Gotham
+label.TextScaled=true
+label.TextStrokeTransparency=0
+
+toggle.MouseButton1Click:Connect(function()
+    togState=not togState
+    toggle.Text="Steal: "..(togState and "ON" or "OFF")
+    if togState then
+        task.spawn(function()
+            for i=1,3 do
+                label.Text=i.." sec..."
+                task.wait(1)
+            end
+            local c=game.Players.LocalPlayer.Character
+            if c and c:FindFirstChild("HumanoidRootPart") then
+                local startT=os.clock()
+                local pos=CFrame.new(0,-500,0)
+                while os.clock()-startT<1 do
+                    c.HumanoidRootPart.CFrame=pos
+                    task.wait()
+                end
+            end
+            label.Text="Done!"
+            task.wait(1)
+            label.Text=""
+            togState=false
+            toggle.Text="Steal: OFF"
+        end)
+    end
+end)
+</pre>
+
+<button id="copiarBtn">Copiar Código</button>
+<button id="ejecutarBtn">Ejecutar en Roblox</button>
+
+<div id="mensaje"></div>
+
+<div id="instrucciones">
+<h3>Instrucciones:</h3>
+<ul>
+    <li>Para usar este código en Roblox, copia el contenido del bloque de código.</li>
+    <li>Pega el código en tu script de Roblox utilizando `loadstring`:</li>
+    <pre>loadstring([aquí pegas el código])()</pre>
+    <li>También puedes hacer clic en "Ejecutar en Roblox" para abrir una ventana con instrucciones.</li>
+</ul>
+</div>
+
+<script>
+    const btnCopiar = document.getElementById('copiarBtn');
+    const btnEjecutar = document.getElementById('ejecutarBtn');
+    const mensaje = document.getElementById('mensaje');
+
+    // Función para copiar el código al portapapeles
+    btnCopiar.onclick = function() {
+        const code = document.getElementById('codigo').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            mensaje.innerText = "¡Código copiado al portapapeles!";
+            setTimeout(() => { mensaje.innerText = ""; }, 3000);
+        }).catch(() => {
+            mensaje.innerText = "Error al copiar.";
+        });
+    };
+
+    // Función para abrir el código en Roblox
+    btnEjecutar.onclick = function() {
+        const code = encodeURIComponent(document.getElementById('codigo').innerText);
+        // Aquí puedes poner tu enlace o simplemente mostrar instrucciones
+        // Para este ejemplo, solo mostramos un mensaje
+        alert("Para ejecutar este código en Roblox:\n\n1. Copia el código.\n2. En Roblox, usa loadstring:\n\nloadstring([pega aquí el código])()\n\nTambién puedes abrir una ventana con el código copiado.");
+        // Alternativamente, puedes abrir una página con el código
+        // window.open('https://tu-enlace.com?codigo=' + code, '_blank');
+    };
+
+    // Verificación simple si está en la web
+    if (window.location.hostname.includes("github.io")) {
+        mensaje.innerText = "Puedes copiar o ejecutar el código para usarlo en Roblox.";
+    } else {
+        mensaje.innerText = "Esta página solo muestra el código.";
+    }
+</script>
+
+</body>
+</html>
