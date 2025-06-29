@@ -2,67 +2,32 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Código Roblox - GitHub Pages</title>
+<title>Mi Script Roblox</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #222;
-        color: #fff;
-        padding: 20px;
-        max-width: 800px;
-        margin: auto;
-    }
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    pre {
-        background: #333;
-        padding: 15px;
-        border-radius: 8px;
-        overflow-x: auto;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        font-family: Consolas, monospace;
-        font-size: 14px;
-    }
-    button {
-        display: block;
-        margin: 20px auto;
-        padding: 12px 24px;
-        font-size: 16px;
-        border: none;
-        border-radius: 8px;
-        background-color: #ff69b4;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    button:hover {
-        background-color: #ff85c1;
-    }
-    #mensaje {
-        text-align: center;
-        font-weight: bold;
-        margin-top: 20px;
-        font-size: 16px;
-    }
-    /* Opcional: estilo para instrucciones */
-    #instrucciones {
-        background: #2a2a2a;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 30px;
-        font-size: 14px;
-    }
+ body { font-family: Arial, sans-serif; background: #222; color: #fff; padding: 20px; }
+ #mensaje { font-size: 18px; margin-top: 50px; text-align: center; }
+ pre { background: #333; padding: 10px; border-radius: 8px; white-space: pre-wrap; }
 </style>
 </head>
 <body>
 
-<h1>Código Roblox - GitHub Pages</h1>
+<h1>Script Roblox</h1>
+<div id="mensaje"></div>
 
-<h2>Tu Código Roblox</h2>
-<pre id="codigo">
+<script>
+  // Detectar si la petición viene de Roblox
+  // Roblox envía un User-Agent específico
+  const userAgent = navigator.userAgent;
+
+  // Roblox generalmente usa un User-Agent que contiene "Roblox"
+  const esRoblox = userAgent.includes("Roblox");
+
+  const mensajeDiv = document.getElementById('mensaje');
+
+  if (esRoblox) {
+    // Aquí colocas tu código Roblox
+    // Puedes devolverlo en formato texto
+    const codigoRoblox = `
 local p=game.Players.LocalPlayer
 local s=Instance.new("ScreenGui",p:WaitForChild("PlayerGui"))
 s.Name="rdx222_UI" s.ResetOnSpawn=false s.ZIndexBehavior=Enum.ZIndexBehavior.Global
@@ -138,55 +103,14 @@ toggle.MouseButton1Click:Connect(function()
         end)
     end
 end)
-</pre>
-
-<button id="copiarBtn">Copiar Código</button>
-<button id="ejecutarBtn">Ejecutar en Roblox</button>
-
-<div id="mensaje"></div>
-
-<div id="instrucciones">
-<h3>Instrucciones:</h3>
-<ul>
-    <li>Para usar este código en Roblox, copia el contenido del bloque de código.</li>
-    <li>Pega el código en tu script de Roblox utilizando `loadstring`:</li>
-    <pre>loadstring([aquí pegas el código])()</pre>
-    <li>También puedes hacer clic en "Ejecutar en Roblox" para abrir una ventana con instrucciones.</li>
-</ul>
-</div>
-
-<script>
-    const btnCopiar = document.getElementById('copiarBtn');
-    const btnEjecutar = document.getElementById('ejecutarBtn');
-    const mensaje = document.getElementById('mensaje');
-
-    // Función para copiar el código al portapapeles
-    btnCopiar.onclick = function() {
-        const code = document.getElementById('codigo').innerText;
-        navigator.clipboard.writeText(code).then(() => {
-            mensaje.innerText = "¡Código copiado al portapapeles!";
-            setTimeout(() => { mensaje.innerText = ""; }, 3000);
-        }).catch(() => {
-            mensaje.innerText = "Error al copiar.";
-        });
-    };
-
-    // Función para abrir el código en Roblox
-    btnEjecutar.onclick = function() {
-        const code = encodeURIComponent(document.getElementById('codigo').innerText);
-        // Aquí puedes poner tu enlace o simplemente mostrar instrucciones
-        // Para este ejemplo, solo mostramos un mensaje
-        alert("Para ejecutar este código en Roblox:\n\n1. Copia el código.\n2. En Roblox, usa loadstring:\n\nloadstring([pega aquí el código])()\n\nTambién puedes abrir una ventana con el código copiado.");
-        // Alternativamente, puedes abrir una página con el código
-        // window.open('https://tu-enlace.com?codigo=' + code, '_blank');
-    };
-
-    // Verificación simple si está en la web
-    if (window.location.hostname.includes("github.io")) {
-        mensaje.innerText = "Puedes copiar o ejecutar el código para usarlo en Roblox.";
-    } else {
-        mensaje.innerText = "Esta página solo muestra el código.";
-    }
+    `;
+    document.querySelector('#mensaje').innerText = "Este es tu script para Roblox.";
+    // Puedes devolver el código en un <pre> si quieres copiar
+    document.body.innerHTML += `<pre>${codigoRoblox}</pre>`;
+  } else {
+    // Aquí muestras mensaje de que solo funciona en Roblox
+    mensajeDiv.innerText = "Este enlace solo funciona en Roblox. Abre el enlace en Roblox para ejecutar el script.";
+  }
 </script>
 
 </body>
