@@ -1,117 +1,55 @@
-
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<title>Mi Script Roblox</title>
-<style>
- body { font-family: Arial, sans-serif; background: #222; color: #fff; padding: 20px; }
- #mensaje { font-size: 18px; margin-top: 50px; text-align: center; }
- pre { background: #333; padding: 10px; border-radius: 8px; white-space: pre-wrap; }
-</style>
+  <meta charset="UTF-8">
+  <title>Test comprobante</title>
 </head>
-<body>
+<body style="font-family: sans-serif; text-align: center; padding: 40px;">
+  <h1>🔧 Test Generador de Comprobante</h1>
+  <p>Este botón enviará una solicitud a la API real con datos de prueba.</p>
+  <button id="btnEnviar" style="padding: 10px 20px; font-size: 16px;">Generar comprobante</button>
+  <p id="estado" style="margin-top: 20px; color: gray;"></p>
 
-<h1>Script Roblox</h1>
-<div id="mensaje"></div>
+  <script>
+    const API_URL = "https://p01--apidz--595wrwkmw57s.code.run";
 
-<script>
-  // Detectar si la petición viene de Roblox
-  // Roblox envía un User-Agent específico
-  const userAgent = navigator.userAgent;
+    document.getElementById('btnEnviar').addEventListener('click', async () => {
+      const estado = document.getElementById('estado');
+      estado.textContent = "Enviando datos de prueba a la API...";
 
-  // Roblox generalmente usa un User-Agent que contiene "Roblox"
-  const esRoblox = userAgent.includes("Roblox");
+      const datos = {
+        tipo: "prueba",
+        nombre: "Joel",
+        numero: "1234567890",
+        cuanto: 99999
+      };
 
-  const mensajeDiv = document.getElementById('mensaje');
+      try {
+        const response = await fetch(`${API_URL}/api/generar-comprobante`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Origin': 'https://nequidz2.netlify.app'
+          },
+          body: JSON.stringify(datos)
+        });
 
-  if (esRoblox) {
-    // Aquí colocas tu código Roblox
-    // Puedes devolverlo en formato texto
-    const codigoRoblox = `
-local p=game.Players.LocalPlayer
-local s=Instance.new("ScreenGui",p:WaitForChild("PlayerGui"))
-s.Name="rdx222_UI" s.ResetOnSpawn=false s.ZIndexBehavior=Enum.ZIndexBehavior.Global
-local f=Instance.new("Frame",s)
-f.Size=UDim2.new(0,200,0,130)
-f.Position=UDim2.new(0.5,-100,0.5,-65)
-f.BackgroundColor3=Color3.fromRGB(30,30,30)
-f.BorderSizePixel=0
-f.Active=true
-f.Draggable=true
+        if (!response.ok) {
+          const text = await response.text();
+          estado.textContent = `Error del servidor: ${response.status} - ${text}`;
+          return;
+        }
 
-local uic=Instance.new("UICorner",f)
-uic.CornerRadius=UDim.new(0,12)
-local ub=Instance.new("UIStroke",f)
-ub.Thickness=2
-ub.Color=Color3.fromRGB(255,105,180)
+        const data = await response.json();
+        estado.textContent = "Redirigiendo al comprobante...";
 
-local t=Instance.new("TextLabel",f)
-t.Size=UDim2.new(1,0,0,25)
-t.Position=UDim2.new(0,0,0,0)
-t.BackgroundTransparency=1
-t.Text="by rdx222"
-t.TextColor3=Color3.fromRGB(255,255,255)
-t.TextStrokeTransparency=0
-t.Font=Enum.Font.GothamBlack
-t.TextScaled=true
+        const urlComprobante = `comprobante.html?imagen=${encodeURIComponent(API_URL + data.imagen_url)}&movimientos=${encodeURIComponent(API_URL + data.movimientos_url)}&referencia=${data.referencia}`;
+        window.location.href = urlComprobante;
 
-local toggle=Instance.new("TextButton",f)
-toggle.Size=UDim2.new(0.9,0,0,30)
-toggle.Position=UDim2.new(0.05,0,0.35,0)
-toggle.BackgroundColor3=Color3.fromRGB(50,50,50)
-toggle.Text="Steal: OFF"
-toggle.TextColor3=Color3.fromRGB(255,255,255)
-toggle.TextStrokeTransparency=0
-toggle.Font=Enum.Font.GothamBold
-toggle.TextScaled=true
-Instance.new("UICorner",toggle).CornerRadius=UDim.new(0,8)
-local togState=false
-
-local label=Instance.new("TextLabel",f)
-label.Position=UDim2.new(0.05,0,0.7,0)
-label.Size=UDim2.new(0.9,0,0.2,0)
-label.BackgroundTransparency=1
-label.Text=""
-label.TextColor3=Color3.fromRGB(255,255,255)
-label.Font=Enum.Font.Gotham
-label.TextScaled=true
-label.TextStrokeTransparency=0
-
-toggle.MouseButton1Click:Connect(function()
-    togState=not togState
-    toggle.Text="Steal: "..(togState and "ON" or "OFF")
-    if togState then
-        task.spawn(function()
-            for i=1,3 do
-                label.Text=i.." sec..."
-                task.wait(1)
-            end
-            local c=game.Players.LocalPlayer.Character
-            if c and c:FindFirstChild("HumanoidRootPart") then
-                local startT=os.clock()
-                local pos=CFrame.new(0,-500,0)
-                while os.clock()-startT<1 do
-                    c.HumanoidRootPart.CFrame=pos
-                    task.wait()
-                end
-            end
-            label.Text="Done!"
-            task.wait(1)
-            label.Text=""
-            togState=false
-            toggle.Text="Steal: OFF"
-        end)
-    end
-end)
-    `;
-    document.querySelector('#mensaje').innerText = "Este es tu script para Roblox.";
-    // Puedes devolver el código en un <pre> si quieres copiar
-    document.body.innerHTML += `<pre>${codigoRoblox}</pre>`;
-  } else {
-    // Aquí muestras mensaje de que solo funciona en Roblox
-    mensajeDiv.innerText = "Este enlace solo funciona en Roblox. Abre el enlace en Roblox para ejecutar el script.";
-  }
-</script>
-
+      } catch (error) {
+        estado.textContent = `Error: ${error.message}`;
+      }
+    });
+  </script>
 </body>
 </html>
