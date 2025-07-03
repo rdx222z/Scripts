@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            inset: 0;
+        }
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .comprobante-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        @media (max-aspect-ratio: 9/16) {
+            .comprobante-img {
+                width: 100%;
+                height: auto;
+            }
+        }
+        @media (min-aspect-ratio: 9/16) {
+            .comprobante-img {
+                width: auto;
+                height: 100%;
+            }
+        }
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            z-index: 100;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #E84B9F;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #ff4d4f;
+            background-color: #fff1f0;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffccc7;
+            text-align: center;
+            max-width: 80%;
+            z-index: 50;
+        }
+        .action-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #E84B9F;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 50;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+    <div class="image-container">
+        <img id="comprobanteImage" class="comprobante-img" src="/placeholder.svg" alt="Comprobante">
+    </div>
+    <div id="error-container" class="error-message" style="display: none;"></div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const imagenUrl = params.get('imagen');
+        const referencia = params.get('referencia');
+        const comprobanteImage = document.getElementById('comprobanteImage');
+        const loading = document.getElementById('loading');
+        const errorContainer = document.getElementById('error-container');
+
+        function mostrarError(mensaje) {
+            loading.style.display = 'none';
+            comprobanteImage.style.display = 'none';
+            errorContainer.textContent = mensaje;
+            errorContainer.style.display = 'block';
+        }
+
+        comprobanteImage.addEventListener('click', function() {
+            const imagenMovimientos = params.get('movimientos');
+            if (imagenMovimientos && referencia) {
+                const destino = `inicio.html?imagen=${encodeURIComponent(imagenMovimientos)}&referencia=${referencia}`;
+                window.location.href = destino;
+            }
+        });
+
+        if (imagenUrl) {
+            comprobanteImage.onload = () => {
+                loading.style.display = 'none';
+            };
+            comprobanteImage.onerror = () => {
+                mostrarError('No se pudo cargar la imagen del comprobante.');
+            };
+            comprobanteImage.src = imagenUrl;
+            setTimeout(() => {
+                if (loading.style.display !== 'none') {
+                    mostrarError('Tiempo de espera agotado al cargar la imagen.');
+                }
+            }, 10000);
+        } else {
+            mostrarError('No se especificó una imagen válida.');
+        }
+
+        if (navigator.share) {
+            const btnCompartir = document.createElement('button');
+            btnCompartir.className = 'action-button';
+            btnCompartir.textContent = 'Compartir';
+
+            btnCompartir.addEventListener('click', async () => {
+                try {
+                    const response = await fetch(imagenUrl);
+                    const blob = await response.blob();
+                    const file = new File([blob], `Comprobante_${referencia || 'Nequi'}.jpg`, {{ type: 'image/jpeg' }});
+                    await navigator.share({ title: 'Comprobante de pago', text: `Referencia: ${referencia}`, files: [file] });
+                } catch (error) {
+                    navigator.share({ title: 'Comprobante de pago', text: `Referencia: ${referencia}`, url: window.location.href }).catch(() => {});
+                }
+            });
+
+            document.body.appendChild(btnCompartir);
+        }
+    </script>
+</body>
+</html>
