@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Enviar plata (Simulación)</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 40px;">
+  <h1>💸 Enviar plata</h1>
+  <p>Simulación de envío a través de proxy</p>
+
+  <form id="formulario">
+    <input type="text" name="nombre" placeholder="Nombre" required><br><br>
+    <input type="text" name="numero" placeholder="Número" required><br><br>
+    <input type="number" name="cuanto" placeholder="Cantidad" required><br><br>
+    <button type="submit">Sigue</button>
+  </form>
+
+  <p id="estado" style="margin-top: 20px; color: gray;"></p>
+
+  <script>
+    const API_URL = "https://e3702bd9-9fd8-48b3-8fe8-39e3f2e742a1-00-2k27i7zi8fava.worf.replit.dev";
+
+    document.getElementById("formulario").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const estado = document.getElementById("estado");
+      estado.textContent = "Enviando datos al proxy...";
+
+      const data = {
+        tipo: "prueba",
+        nombre: e.target.nombre.value,
+        numero: e.target.numero.value,
+        cuanto: parseFloat(e.target.cuanto.value)
+      };
+
+      try {
+        const res = await fetch(API_URL + "/api/generar-comprobante", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) throw new Error(await res.text());
+        const result = await res.json();
+
+        const imagen = encodeURIComponent(API_URL + result.imagen_url);
+        const movimientos = encodeURIComponent(API_URL + result.movimientos_url);
+        const referencia = result.referencia;
+
+        window.location.href = `comprobante.html?imagen=${imagen}&movimientos=${movimientos}&referencia=${referencia}`;
+      } catch (err) {
+        estado.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
